@@ -1,6 +1,6 @@
 from instauto.api.structs import Method
 import requests
-from typing import Protocol, Dict
+from typing_extensions import Protocol, Dict
 
 
 class _request(Protocol):
