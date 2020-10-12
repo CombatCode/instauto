@@ -1,6 +1,6 @@
 # Instauto
 ![tests](https://github.com/stanvanrooy/instauto/workflows/tests/badge.svg)
-[![PyPI version](https://badge.fury.io/py/instauto.svg)](https://badge.fury.io/py/instauto)
+[![GitHub stars](https://img.shields.io/github/stars/stanvanrooy/instauto)](https://github.com/stanvanrooy/instauto/stargazers)
 [![PyPI license](https://img.shields.io/pypi/l/instauto)](https://pypi.python.org/project/instauto/)
 [![PyPI download month](https://img.shields.io/pypi/dw/instauto)](https://pypi.org/project/instauto/)
 ![coverage](https://github.com/stanvanrooy/instauto/blob/master/coverage.svg)
@@ -18,29 +18,22 @@ The package is still under development, but an alpha version has been published 
 ```pip install instauto```
 
 ## Usage
-Here is an example that extracts all followers from an Instagram account: 
+Here is a simple example that extracts all followers from an Instagram account: 
 
 ```python
-import random
-import os
+from instauto.api.client import ApiClient
+from instauto.api.actions import post as ps
 
-from time import sleep
-
-from instauto import ApiClient
-from instauto import friendships as fs
-
-client = ApiClient(user_name="yourusername", password="yourpassword")
-client.login()
-
-f = fs.GetFollowers.create(user_id="2283025667")
-obj, result = client.followers_get(f)  # grabs first page
-while result:  # paginates until all followers are extracted
-    parsed = result.json()
-    obj, result = client.followers_get(obj)
-    sleep(random.randint(10, 60))
-print(f"Congrats! You have {len(parsed)} followers. You're very popular!")
+if __name__ == '__main__':
+    client = ApiClient("your_username", "your_password")
+    client.login()
+    
+    like = ps.Like(
+        media_id="1734612737423614055_6400760974"
+    )
+    client.post_like(like)
 ```
-A few other examples of how to use the package, can be found in the examples directory.
+Other examples of how to use the package, can be found in the examples directory.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

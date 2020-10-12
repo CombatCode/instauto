@@ -3,6 +3,7 @@ import hmac
 
 from requests import Session, Response
 from typing import Callable, Union
+from instauto.api.actions.stubs import _request
 from dataclasses import asdict
 
 from ..structs import Method, State, DeviceProfile, IGProfile
@@ -18,7 +19,7 @@ class PostMixin:
     ig_profile: IGProfile
     state: State
     device_profile: DeviceProfile
-    _request: Callable
+    _request: _request
     _gen_uuid: Callable
     _generate_user_breadcrumb: Callable
 
@@ -27,9 +28,6 @@ class PostMixin:
 
     def _post_act(self, obj: Union[Save, Post, Comment, UpdateCaption, Like, Unlike]):
         """Peforms the actual action and calls the Instagram API with the data provided."""
-        obj._csrftoken = self._session.cookies['csrftoken']
-        obj._uid = self.state.user_id
-        obj._uuid = self.state.uuid
         if obj.feed_position is None:
             delattr(obj, 'feed_position')
 
@@ -97,16 +95,12 @@ class PostMixin:
             quality = 70
 
         # sets all data of the PostPost object that is stored in the ig_profile, device_profile or state attributes.
-        obj._csrftoken = self._session.cookies['csrftoken']
-        obj._uid = self.state.user_id
-        obj._uuid = self.state.uuid
-        obj.device_id = self.state.device_id
         if obj.device is None:
             d = Device(self.device_profile.manufacturer, self.device_profile.model,
                        int(self.device_profile.android_sdk_version), self.device_profile.android_release)
             obj.device = d
 
-        as_dict = asdict(obj)
+        as_dict = obj.to_dict()
         # Instagram will refuse the request and respond with a 400 bad request if an empty location is send along
         if as_dict['location'] is None: as_dict.pop('location')
 
@@ -150,7 +144,7 @@ class PostMixin:
             Will return the updated object and the response if there were any posts left, returns the object and
             False if not.
         """
-        as_dict = obj.__dict__.copy()
+        as_dict = obj.to_dict()
 
         if obj.page > 0 and obj.max_id is None:
             return obj, False
