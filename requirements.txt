@@ -21,3 +21,4 @@ six==1.15.0
 snowballstemmer==2.0.0
 tzlocal==2.1
 urllib3==1.25.9
+typing-extensions==3.7.4.3
